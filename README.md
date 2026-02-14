@@ -73,44 +73,20 @@ First, check the documentation by Terragrunt regarding this:
 * https://github.com/gruntwork-io/terragrunt-infrastructure-live-stacks-example
 * https://github.com/gruntwork-io/terragrunt-infrastructure-catalog-example
 
-Now, for example to use the module as a terragrunt unit it could be created a directory called 'router', and inside of it a file 'terragrunt.stack.hcl' with the following content:
-
+Now, to use the module as a Terragrunt Unit, a terragrunt.hcl with the following content could be created for example:
 ```hcl
 # ------------------------------------------
 # Unit: RouterOS Firewall
 # ------------------------------------------
-unit "firewall" {
-  source = "git@github.com:ceso/tofu_routeros_firewall.git"
-  
-  path = "firewall"
-
-  values = merge(
-    # Pass relevant defaults
-    {
-      configure_ipv4_firewall   = local.all_defaults.configure_ipv4_firewall
-      create_ipv4_address_lists = local.all_defaults.create_ipv4_address_lists
-      create_ipv4_filter_rules  = local.all_defaults.create_ipv4_filter_rules
-      create_ipv4_nat_rules     = local.all_defaults.create_ipv4_nat_rules
-      create_ipv4_raw_rules     = local.all_defaults.create_ipv4_raw_rules
-      create_ipv4_mangle_rules  = local.all_defaults.create_ipv4_mangle_rules
-      configure_ipv6_firewall   = local.all_defaults.configure_ipv6_firewall
-      create_ipv6_address_lists = local.all_defaults.create_ipv6_address_lists
-      create_ipv6_filter_rules  = local.all_defaults.create_ipv6_filter_rules
-      create_ipv6_nat_rules     = local.all_defaults.create_ipv6_nat_rules
-      create_ipv6_raw_rules     = local.all_defaults.create_ipv6_raw_rules
-      create_ipv6_mangle_rules  = local.all_defaults.create_ipv6_mangle_rules
-      ipv4_address_list         = local.all_defaults.ipv4_address_list
-      ipv6_address_list         = local.all_defaults.ipv6_address_list
-    },
-    # Device-specific firewall rules from values
-    {
-      ipv4_filter_rules = local.ipv4_filter_rules
-      ipv4_nat_rules    = local.ipv4_nat_rules
-      ipv4_raw_rules    = local.ipv4_raw_rules
-      ipv4_mangle_rules = local.ipv4_mangle_rules
-    }
-  )
+include "root" {
+  path = find_in_parent_folders("root.hcl")
 }
+
+terraform {
+  source = "git::git@github.com:ceso/tofu_routeros_firewall.git?ref=main"
+}
+
+inputs = try(values, {})
 ```
 
 ## TODO

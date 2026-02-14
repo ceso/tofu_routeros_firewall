@@ -453,10 +453,10 @@ variable "ipv4_nat_rules" {
   validation {
     condition = alltrue([
       for r in var.ipv4_nat_rules : contains(
-        ["masquerade", "srcnat", "dstnat", "netmap", "redirect", "same"], r.action
+        ["masquerade", "srcnat", "dstnat", "netmap", "redirect", "same", "accept"], r.action
       )
     ])
-    error_message = "Each NAT rule 'action' must be one of: masquerade, srcnat, dstnat, netmap, redirect, same"
+    error_message = "Each NAT rule 'action' must be one of: masquerade, srcnat, dstnat, netmap, redirect, same, accept"
   }
 }
 
